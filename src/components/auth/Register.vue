@@ -47,8 +47,7 @@ export default {
     },
     register() {
       HTTP.post('user', JSON.stringify({'username': this.username, 'password': this.password}))
-      .then(response => {
-        console.log(response)
+      .then(() => {
         toast.success('User created')
         this.$router.push('/login/')
       })
