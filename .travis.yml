@@ -9,6 +9,7 @@ services:
 
 before_install:
   - './.travis/main.sh'
+  - sed -i "s/localhost/$SERVER_IP/" src/util/http.js
 
 script:
   - 'make image'
