@@ -26,12 +26,16 @@
     <div v-if="comments" class="row">
       <router-link :to="'/categories/' + post.CategoryUID + '/post/' + post.UID"><small>Read comments</small></router-link>
     </div>
-    <div v-if="post.UserUID === uid" class="row">
+    <div v-if="uid" class="row">
       <div class="button" @click="showEditForm">Edit</div>
       <div class="button button-outline" style="margin-left:10px;" @click="deletePost">Delete</div>
+      <div class="button button-outline" style="margin-left:10px;" @click="showReportForm">Report</div>
     </div>
-    <div class="row" v-if="editing">
+    <div class="row" v-show="editing">
       <editPostForm :post="post"></editPostForm>
+    </div>
+    <div class="row" v-show="reporting">
+      <submitReportForm :categoryUID="post.CategoryUID" :postUID="post.UID"></submitReportForm>
     </div>
   </div>
 </template>
@@ -41,16 +45,19 @@ import {HTTP} from '@/util/http'
 import toast from '@/util/toast'
 
 import EditPostForm from '@/components/post/Edit.vue'
+import SubmitReportForm from '@/components/report/New.vue'
 
 export default {
   name: 'post',
   components: {
-    EditPostForm
+    EditPostForm,
+    SubmitReportForm
   },
   props: ['post', 'comments'],
   data () {
     return {
       editing: false,
+      reporting: false,
       uid: localStorage.getItem('UID'),
       username: ''
     }
@@ -102,6 +109,12 @@ export default {
     },
     closeEditForm() {
       this.editing = false
+    },
+    showReportForm() {
+      this.reporting = true
+    },
+    closeReportForm() {
+      this.reporting = false
     },
     handle403(func) {
       if (localStorage.getItem('refreshToken')) {

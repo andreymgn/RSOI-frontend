@@ -12,9 +12,10 @@
   </div>
   <div class="row">
     <div class="button button-outline" @click="loadReplies">Load replies</div>
-    <div v-if="comment.UserUID === uid" class="button button-outline" style="margin-left:10px;" @click="showCommentForm">Reply</div>
-    <div v-if="comment.UserUID === uid" class="button button-clear" style="margin-left:10px;" @click="showEditForm">Edit</div>
-    <div v-if="comment.UserUID === uid" class="button button-clear" style="margin-left:10px;" @click="deleteComment">Delete</div>
+    <div v-if="uid && username!='[deleted]'" class="button button-outline" style="margin-left:10px;" @click="showCommentForm">Reply</div>
+    <div v-if="uid && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="showEditForm">Edit</div>
+    <div v-if="uid && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="deleteComment">Delete</div>
+    <div v-if="uid && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="showReportForm">Report</div>
   </div> 
   <div v-show="replying">
     <submitCommentForm :postUID="comment.PostUID" :parentUID="comment.UID" :categoryUID="categoryUID"></submitCommentForm>
@@ -22,8 +23,13 @@
   <div v-show="editing">
     <editCommentForm :comment="comment" :categoryUID="categoryUID"></editCommentForm>
   </div>
-  <comment v-if="children" v-for="child in children" :key="child.UID" :comment="child"></comment>
+  <div v-show="reporting">
+      <submitReportForm :categoryUID="categoryUID" :postUID="comment.PostUID" :commentUID="comment.UID"></submitReportForm>
   </div>
+  <div v-if="children" >
+    <comment v-for="child in children" :key="child.UID" :comment="child" :categoryUID="categoryUID"></comment>
+  </div>
+</div>
 </template>
 
 <script>
@@ -32,18 +38,21 @@ import toast from '@/util/toast'
 
 import SubmitCommentForm from '@/components/comment/New.vue'
 import EditCommentForm from '@/components/comment/Edit.vue'
+import SubmitReportForm from '@/components/report/New.vue'
 
 export default {
   name: 'comment',
   components: {
     SubmitCommentForm,
-    EditCommentForm
+    EditCommentForm,
+    SubmitReportForm
   },
   props: ['comment', 'categoryUID'],
   data() {
     return {
       replying: false,
       editing: false,
+      reporting: false,
       children: null,
       username: '',
       uid: localStorage.getItem('UID')
@@ -73,6 +82,12 @@ export default {
       this.editing = false
       this.$parent.fetchComments()
     },
+    showReportForm() {
+      this.reporting = true
+    },
+    closeReportForm() {
+      this.reporting = false
+    },
     deleteComment(retry=true) {
       var postUID = this.comment.PostUID
       var commentUID = this.comment.UID
@@ -81,6 +96,9 @@ export default {
           toast.success('Comment deleted')
           this.comment.Body = '[deleted]'
           this.username = '[deleted]'
+          if (this.$parent.constructor.options.name == 'report') { // call deleteComment if parent is a report
+            this.$parent.deleteComment()
+          }
         })
         .catch(error => {
           if (retry && error.response.status === 403) {

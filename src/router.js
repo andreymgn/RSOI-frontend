@@ -3,8 +3,8 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Categories from './views/Categories.vue'
 import Category from './views/Category.vue'
+import Reports from './views/Reports.vue'
 import Comments from './views/Comments.vue'
-import NewPost from './views/NewPost.vue'
 import Register from './views/Register.vue'
 import Login from './views/Login.vue'
 import NewApp from './views/NewApp.vue'
@@ -35,9 +35,9 @@ export default new Router({
       component: Comments
     },
     {
-      path: '/submit',
-      name: 'submit',
-      component: NewPost
+      path: '/categories/:categoryuid/reports',
+      name: 'reports',
+      component: Reports
     },
     {
       path: '/register',
