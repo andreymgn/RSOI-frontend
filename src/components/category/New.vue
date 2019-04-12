@@ -7,8 +7,8 @@
                     <li v-for="error in errors" :key="error">{{ error }}</li>
                 </ul>
             </div>
-            <label for="body">Comment body</label>
-            <textarea type="body" name="body" id="body" v-model="body"></textarea>
+            <label for="name">Category name</label>
+            <textarea type="name" name="name" id="name" v-model="name"></textarea>
             <br>
             <input class="button-primary" type="submit" value="Submit">
             <div class="button button-outline" style="margin-left:10px;" @click="cancel">Cancel</div>
@@ -21,36 +21,35 @@ import {HTTP} from '@/util/http'
 import toast from '@/util/toast'
 
 export default {
-    name: 'newCommentForm',
-    props: ['postUID', 'parentUID', 'categoryUID'],
+    name: 'newCategoryForm',
     data () {
         return {
             errors: [],
-            body: null
+            name: null
         }
     },
     methods: {
         checkForm(e) {
             this.errors = [];
-            if (!this.body) {
-                this.errors.push("Comment body can't be empty.")
+            if (!this.name) {
+                this.errors.push("Category name can't be empty.")
             }
             if (!this.errors.length) {
-                this.submitComment()
+                this.submitCategory()
             }
             e.preventDefault()
         },
-        submitComment(retry=true) {
-            HTTP.post('categories/' + this.categoryUID + '/posts/' + this.postUID + '/comments/', JSON.stringify({'body': this.body, 'parent_uid': this.parentUID }), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
-            .then(() => {
-                toast.success('Comment created')
-                this.$parent.closeCommentForm(false)
+        submitCategory(retry=true) {
+            HTTP.post('categories/', JSON.stringify({'name': this.name}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+            .then((response) => {
+                toast.success('Category created')
+                this.$router.push('/categories/' + response.data.UID)
             })
             .catch(error => {
                 if (retry && error.response.status === 403) {
                     if (localStorage.getItem('refreshToken')) {
                         this.$store.dispatch('refresh')
-                        this.submitComment(retry=false)
+                        this.submitCategory(retry=false)
                     } else {
                         this.$store.dispatch('logout')
                         this.$router.push('/login/')
@@ -60,7 +59,7 @@ export default {
             })
         },
         cancel() {
-            this.$parent.closeCommentForm(true)
+            this.$parent.closeCategoryForm()
         }
     }
 }

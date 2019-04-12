@@ -22,7 +22,7 @@ import toast from '@/util/toast'
 
 export default {
     name: 'editCommentForm',
-    props: ['comment'],
+    props: ['comment', 'categoryUID'],
     data () {
         return {
             errors: [],
@@ -41,7 +41,7 @@ export default {
             e.preventDefault()
         },
         editComment(retry=true) {
-            HTTP.patch('posts/' + this.comment.PostUID + '/comments/' + this.comment.UID, JSON.stringify({'body': this.body }), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+            HTTP.patch('categories/' + this.categoryUID + '/posts/' + this.comment.PostUID + '/comments/' + this.comment.UID, JSON.stringify({'body': this.body }), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
             .then(() => {
                 toast.success('Comment changed')
                 this.$parent.closeEditForm()
@@ -50,7 +50,7 @@ export default {
                 if (retry && error.response.status === 403) {
                     if (localStorage.getItem('refreshToken')) {
                         this.$store.dispatch('refresh')
-                        this.submitComment(retry=false)
+                        this.editComment(retry=false)
                     } else {
                         this.$store.dispatch('logout')
                         this.$router.push('/login/')

@@ -17,10 +17,10 @@
     <div v-if="comment.UserUID === uid" class="button button-clear" style="margin-left:10px;" @click="deleteComment">Delete</div>
   </div> 
   <div v-show="replying">
-    <submitCommentForm :postUID="comment.PostUID" :parentUID="comment.UID"></submitCommentForm>
+    <submitCommentForm :postUID="comment.PostUID" :parentUID="comment.UID" :categoryUID="categoryUID"></submitCommentForm>
   </div>
   <div v-show="editing">
-    <editCommentForm :comment="comment"></editCommentForm>
+    <editCommentForm :comment="comment" :categoryUID="categoryUID"></editCommentForm>
   </div>
   <comment v-if="children" v-for="child in children" :key="child.UID" :comment="child"></comment>
   </div>
@@ -39,7 +39,7 @@ export default {
     SubmitCommentForm,
     EditCommentForm
   },
-  props: ['comment'],
+  props: ['comment', 'categoryUID'],
   data() {
     return {
       replying: false,
@@ -76,7 +76,7 @@ export default {
     deleteComment(retry=true) {
       var postUID = this.comment.PostUID
       var commentUID = this.comment.UID
-      HTTP.delete('posts/' + postUID + '/comments/' + commentUID, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+      HTTP.delete('categories/' + this.categoryUID + '/posts/' + postUID + '/comments/' + commentUID, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
         .then(() => {
           toast.success('Comment deleted')
           this.comment.Body = '[deleted]'
@@ -96,7 +96,7 @@ export default {
         })
     },
     loadReplies() {
-      HTTP.get('posts/' + this.comment.PostUID + '/comments/' + this.comment.UID)
+      HTTP.get('categories/' + this.categoryUID + '/posts/' + this.comment.PostUID + '/comments/' + this.comment.UID)
         .then(response => {
           this.children = response.data.Comments
         })

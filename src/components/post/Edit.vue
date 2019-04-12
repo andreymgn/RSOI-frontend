@@ -46,7 +46,7 @@ export default {
       e.preventDefault()
     },
     updatePost(retry=true) {
-      HTTP.patch('posts/' + this.post.UID, JSON.stringify({'title': this.title, 'url': this.URL}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+      HTTP.patch('categories/' + this.post.CategoryUID + '/posts/' + this.post.UID, JSON.stringify({'title': this.title, 'url': this.URL}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
       .then(() => {
         toast.success('Post updated')
         this.$parent.closeEditForm()

@@ -24,7 +24,7 @@
       <small v-if="post.CreatedAt != post.ModifiedAt">; Modified: {{ post.ModifiedAt | timeAgo}}</small>
     </div>
     <div v-if="comments" class="row">
-      <router-link :to="'/post/' + post.UID"><small>Read comments</small></router-link>
+      <router-link :to="'/categories/' + post.CategoryUID + '/post/' + post.UID"><small>Read comments</small></router-link>
     </div>
     <div v-if="post.UserUID === uid" class="row">
       <div class="button" @click="showEditForm">Edit</div>
@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     like(retry=true) {
-      HTTP.patch('posts/' + this.post.UID + '/like', '', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+      HTTP.patch('categories/' + this.post.CategoryUID + '/posts/' + this.post.UID + '/like', '', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
         .then(() => {
           this.post.NumLikes++
         })
@@ -72,7 +72,7 @@ export default {
         })
     },
     dislike(retry=true) {
-      HTTP.patch('posts/' + this.post.UID + '/dislike', '', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+      HTTP.patch('categories/' + this.post.CategoryUID + '/posts/' + this.post.UID + '/dislike', '', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
         .then(() => {
           this.post.NumDislikes++
         })
@@ -85,7 +85,7 @@ export default {
     },
     deletePost(retry=true) {
       var postUID = this.post.UID
-      HTTP.delete('posts/' + this.post.UID, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+      HTTP.delete('categories/' + this.post.CategoryUID + '/posts/' + this.post.UID, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
         .then(() => {
           toast.success('Post deleted')
           this.$parent.deletePost(postUID)

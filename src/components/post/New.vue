@@ -13,6 +13,7 @@
       <input type="URL" name="URL" id="url" v-model="URL">
       <br>
       <input class="button-primary" type="submit" value="Submit">
+      <div class="button button-outline" style="margin-left:10px;" @click="cancel">Cancel</div>
     </form>
   </div>
 </template>
@@ -43,10 +44,10 @@ export default {
       e.preventDefault()
     },
     submitPost(retry=true) {
-      HTTP.post('posts/', JSON.stringify({'title': this.title, 'url': this.URL}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+      HTTP.post('categories/' + this.$route.params.uid + '/posts', JSON.stringify({'title': this.title, 'url': this.URL}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
       .then(response => {
         toast.success('Post created')
-        this.$router.push('/post/' + response.data.UID)
+        this.$router.push('/categories/' + this.$route.params.uid + '/post/' + response.data.UID)
       })
       .catch(error => {
         if (retry && error.response.status === 403) {
@@ -60,6 +61,9 @@ export default {
         }
         toast.error(error.message)
       })
+    },
+    cancel() {
+      this.$parent.closePostForm(true)
     }
   }
 }

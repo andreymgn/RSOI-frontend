@@ -6,11 +6,11 @@
     <div v-if="isLoggedIn" class="button float-left" @click="showCommentForm">New comment</div>
     <div class="row">
       <div v-if="editing">
-        <submitCommentForm :postUID="post.UID"></submitCommentForm>
+        <submitCommentForm :postUID="post.UID" :categoryUID="post.CategoryUID"></submitCommentForm>
       </div>
     </div>
     <div class="column" v-if="comments && comments.length > 0">
-      <comment v-for="comment in comments" :key="comment.UID" :comment="comment"></comment>
+      <comment v-for="comment in comments" :key="comment.UID" :comment="comment" :categoryUID="post.CategoryUID"></comment>
     </div>
     <div class="row" v-else>No comments yet</div>
     <button v-show="pageNumber > 0" @click="loadPrevious">&lt;</button>
@@ -63,7 +63,7 @@ export default {
       this.fetchComments(0, 10)
     },
     fetchPost() {
-      HTTP.get('posts/' + this.$route.params.uid)
+      HTTP.get('/categories/' + this.$route.params.categoryuid + '/posts/' + this.$route.params.uid)
       .then(response => {
         this.post = response.data
       })
@@ -76,7 +76,7 @@ export default {
       })
     },
     fetchComments(pageNumber, pageSize) {
-      HTTP.get('posts/' + this.$route.params.uid + '/comments/', {
+      HTTP.get('/categories/' + this.$route.params.categoryuid + '/posts/' + this.$route.params.uid + '/comments/', {
         params: {
           size: pageSize,
           page: pageNumber

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import Categories from './views/Categories.vue'
+import Category from './views/Category.vue'
 import Comments from './views/Comments.vue'
 import NewPost from './views/NewPost.vue'
 import Register from './views/Register.vue'
@@ -18,7 +20,17 @@ export default new Router({
       component: Home
     },
     {
-      path: '/post/:uid',
+      path: '/categories',
+      name: 'categories',
+      component: Categories
+    },
+    {
+      path: '/categories/:uid',
+      name: 'category',
+      component: Category
+    },
+    {
+      path: '/categories/:categoryuid/post/:uid',
       name: 'post',
       component: Comments
     },
