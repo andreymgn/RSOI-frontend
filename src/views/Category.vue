@@ -1,7 +1,8 @@
 <template>
   <div class="container">
-    <div v-if="isLoggedIn" class="button" @click="showPostForm">New Post</div>
-    <div v-if="editing">
+    <div v-show="isLoggedIn" class="button" @click="showPostForm">New Post</div>
+    <div v-show="uid === category.UserUID" class="button" style="margin-left:10px;" @click="goToReports">Check user reports</div>
+    <div v-show="editing">
       <submitPostForm :categoryUID="this.categoryUID"></submitPostForm>
     </div>
     <div v-if="posts && posts.length > 0" >
@@ -11,7 +12,7 @@
       No one posted anything
     </div>
     <button v-show="pageNumber > 0" @click="loadPrevious">&lt;</button>
-    <button v-if="itemsLoaded == pageSize" @click="loadNext" style="margin-left:10px;">&gt;</button>
+    <button v-show="itemsLoaded == pageSize" @click="loadNext" style="margin-left:10px;">&gt;</button>
   </div> 
 </template>
 
@@ -39,14 +40,17 @@ export default {
       pageNumber: null,
       pageSize: null,
       itemsLoaded: 0,
-      editing: false
+      editing: false,
+      category: null,
+      uid: localStorage.getItem('UID')
     }
   },
   mounted () {
     this.getPage(0, 10)
+    this.getInfo()
   },
   computed: {
-    ...Vuex.mapGetters(['isLoggedIn'])
+    ...Vuex.mapGetters(['isLoggedIn']),
   },
   methods: {
     getPage(pageNumber, pageSize) {
@@ -65,6 +69,18 @@ export default {
         .catch(error => {
           toast.error(error.message)
         })
+    },
+    getInfo() {
+      HTTP.get('/categories/' + this.$route.params.uid,)
+        .then(response => {
+          this.category = response.data
+        })
+        .catch(error => {
+          toast.error(error.message)
+        })
+    },
+    goToReports() {
+      this.$router.push('/categories/' + this.category.UID + '/reports')
     },
     deletePost(postUID) {
       for (var i = 0; i < this.posts.length; i++) {

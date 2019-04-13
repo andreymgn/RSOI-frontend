@@ -1,13 +1,11 @@
 <template>
   <div class="container">
     <div v-if="isLoggedIn" class="button" @click="showCategoryForm">New category</div>
-    <div v-if="editing">
+    <div v-show="editing">
       <submitCategoryForm></submitCategoryForm>
     </div>
     <div v-for="category in categories" :key="category.UID">
-      <div v-if="category">
-        <category :category="category"></category>
-      </div>
+      <category :category="category"></category>
     </div>
     <button v-show="pageNumber > 0" @click="loadPrevious">&lt;</button>
     <button v-if="itemsLoaded == pageSize" @click="loadNext" style="margin-left:10px;">&gt;</button>

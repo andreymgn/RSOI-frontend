@@ -1,7 +1,12 @@
 <template>
-  <div class="container">
-      <report v-for="report in reports" :key="report.UID" :report="report"></report>
-  </div> 
+  <div class="column">
+      <div v-if="reports && reports.length > 0">
+        <report v-for="report in reports" :key="report.UID" :report="report"></report>
+      </div>
+      <div v-else>
+        No reports
+      </div>
+  </div>
 </template>
 
 <script>

@@ -10,6 +10,9 @@
             <label for="name">Category name</label>
             <textarea type="name" name="name" id="name" v-model="name"></textarea>
             <br>
+            <label for="description">Category description</label>
+            <textarea type="description" name="description" id="description" v-model="description"></textarea>
+            <br>
             <input class="button-primary" type="submit" value="Submit">
             <div class="button button-outline" style="margin-left:10px;" @click="cancel">Cancel</div>
         </form>
@@ -25,7 +28,8 @@ export default {
     data () {
         return {
             errors: [],
-            name: null
+            name: null,
+            description: null
         }
     },
     methods: {
@@ -34,13 +38,16 @@ export default {
             if (!this.name) {
                 this.errors.push("Category name can't be empty.")
             }
+            if (!this.description) {
+                this.errors.push("Category description can't be empty.")
+            }
             if (!this.errors.length) {
                 this.submitCategory()
             }
             e.preventDefault()
         },
         submitCategory(retry=true) {
-            HTTP.post('categories/', JSON.stringify({'name': this.name}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
+            HTTP.post('categories/', JSON.stringify({'name': this.name, 'description': this.description}), {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
             .then((response) => {
                 toast.success('Category created')
                 this.$router.push('/categories/' + response.data.UID)

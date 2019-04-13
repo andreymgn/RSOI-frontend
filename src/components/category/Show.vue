@@ -1,10 +1,6 @@
 <template>
-  <div class="container border">
-    <div class="column column-90">
-      <div class="row float-left">
-        <router-link :to="'/categories/' + category.UID"><small>{{ category.Name }}</small></router-link>
-      </div>
-    </div>
+  <div class="column">
+    <router-link class="center"  :to="'/categories/' + category.UID">{{ category.Name }}</router-link> Description: {{ category.Description }}
   </div>
 </template>
 
@@ -16,10 +12,7 @@ export default {
 </script>
 
 <style>
-  .border {
-    border: 1px solid rgb(84, 34, 178);
-    border-radius: 1px;
-    margin-top: 2px;
-    margin-bottom: 2px;
+  .center {
+    text-align: center;
   }
 </style>
