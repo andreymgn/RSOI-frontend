@@ -62,7 +62,9 @@ export default {
       editing: false,
       reporting: false,
       uid: localStorage.getItem('UID'),
-      username: ''
+      username: '',
+      liked: false,
+      disliked: false
     }
   },
   created () {
@@ -71,8 +73,13 @@ export default {
   methods: {
     like(retry=true) {
       HTTP.patch('categories/' + this.post.CategoryUID + '/posts/' + this.post.UID + '/like', '', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
-        .then(() => {
-          this.post.NumLikes++
+        .then((response) => { //придумай
+          if (response.data.FirstTime) { 
+            this.post.NumLikes++
+          } else if (response.data.Success) {
+            this.post.NumLikes++
+            this.post.NumDislikes--
+          }
         })
         .catch(error => {
           if (retry && error.response.status === 403) {
@@ -83,8 +90,13 @@ export default {
     },
     dislike(retry=true) {
       HTTP.patch('categories/' + this.post.CategoryUID + '/posts/' + this.post.UID + '/dislike', '', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
-        .then(() => {
-          this.post.NumDislikes++
+        .then((response) => {
+          if (response.data.FirstTime) { 
+            this.post.NumDislikes++
+          } else if (response.data.Success) {
+            this.post.NumDislikes++
+            this.post.NumLikes--
+          }
         })
         .catch(error => {
           if (retry && error.response.status === 403) {
