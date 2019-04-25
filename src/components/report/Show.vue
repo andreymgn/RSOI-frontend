@@ -77,9 +77,7 @@ export default {
     },
     deleteReport(retry=true) {
       HTTP.delete('/categories/' + this.$route.params.categoryuid + '/reports/' + this.report.UID, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
-      .then(() => {
-        toast.success('Post deleted')
-      })
+      .then(() => {})
       .catch(error => {
         if (retry && error.response.status === 403) {
           this.handle403(() => this.deletePost(retry=false))
