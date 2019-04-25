@@ -41,7 +41,6 @@ export default {
             e.preventDefault()
         },
         submitReport(retry=true) {
-            console.log(this.commentUID)
             if (this.commentUID) {
                 this.submitCommentReport(retry)
             } else {
