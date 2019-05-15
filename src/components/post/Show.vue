@@ -29,7 +29,7 @@
     <div v-if="category" class="row">
       <router-link :to="'/categories/' + post.CategoryUID"><small>Read other posts like this</small></router-link>
     </div>
-    <div v-if="uid" class="row">
+    <div v-if="uid === post.UserUID" class="row">
       <div class="button" @click="showEditForm">Edit</div>
       <div class="button button-outline" style="margin-left:10px;" @click="deletePost">Delete</div>
       <div class="button button-outline" style="margin-left:10px;" @click="showReportForm">Report</div>

@@ -20,16 +20,12 @@
 <script>
 import Vuex from 'vuex'
 export default {
-  data () {
-    return {
-      username: localStorage.getItem('username'),
-    }
-  },
   methods: {
     ...Vuex.mapActions(['logout'])
   },
   computed: {
-    ...Vuex.mapGetters(['isLoggedIn'])
+    ...Vuex.mapGetters(['isLoggedIn']),
+    username: () => localStorage.getItem('username'),
   }
 }
 </script>
