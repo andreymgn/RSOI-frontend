@@ -29,10 +29,10 @@
     <div v-if="category" class="row">
       <router-link :to="'/categories/' + post.CategoryUID"><small>Read other posts like this</small></router-link>
     </div>
-    <div v-if="uid === post.UserUID" class="row">
-      <div class="button" @click="showEditForm">Edit</div>
-      <div class="button button-outline" style="margin-left:10px;" @click="deletePost">Delete</div>
-      <div class="button button-outline" style="margin-left:10px;" @click="showReportForm">Report</div>
+    <div class="row">
+      <div v-show="uid === post.UserUID" class="button" @click="showEditForm">Edit</div>
+      <div v-show="uid === post.UserUID || isMod" class="button button-outline" style="margin-left:10px;" @click="deletePost">Delete</div>
+      <div v-show="uid" class="button button-outline" style="margin-left:10px;" @click="showReportForm">Report</div>
     </div>
     <div class="row" v-show="editing">
       <editPostForm :post="post"></editPostForm>
@@ -56,7 +56,7 @@ export default {
     EditPostForm,
     SubmitReportForm
   },
-  props: ['post', 'comments', 'category'],
+  props: ['post', 'comments', 'category', 'isMod'],
   data () {
     return {
       editing: false,
@@ -64,7 +64,7 @@ export default {
       uid: localStorage.getItem('UID'),
       username: '',
       liked: false,
-      disliked: false
+      disliked: false,
     }
   },
   created () {

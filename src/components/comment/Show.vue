@@ -12,10 +12,10 @@
   </div>
   <div class="row">
     <div class="button button-outline" @click="loadReplies">Load replies</div>
-    <div v-show="uid === comment.UserUID && username!='[deleted]'" class="button button-outline" style="margin-left:10px;" @click="showCommentForm">Reply</div>
+    <div v-show="username!='[deleted]'" class="button button-outline" style="margin-left:10px;" @click="showCommentForm">Reply</div>
     <div v-show="uid === comment.UserUID && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="showEditForm">Edit</div>
-    <div v-show="uid === comment.UserUID && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="deleteComment">Delete</div>
-    <div v-show="uid === comment.UserUID && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="showReportForm">Report</div>
+    <div v-show="uid === comment.UserUID && username!='[deleted]' || isMod" class="button button-clear" style="margin-left:10px;" @click="deleteComment">Delete</div>
+    <div v-show="uid && username!='[deleted]'" class="button button-clear" style="margin-left:10px;" @click="showReportForm">Report</div>
   </div> 
   <div v-show="replying">
     <submitCommentForm :postUID="comment.PostUID" :parentUID="comment.UID" :categoryUID="categoryUID"></submitCommentForm>
@@ -47,7 +47,7 @@ export default {
     EditCommentForm,
     SubmitReportForm
   },
-  props: ['comment', 'categoryUID'],
+  props: ['comment', 'categoryUID', 'isMod'],
   data() {
     return {
       replying: false,

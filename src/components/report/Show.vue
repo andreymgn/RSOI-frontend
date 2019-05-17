@@ -1,18 +1,11 @@
 <template>
-  <div class="container border">
+  <div v-show="show" class="container border">
     <div class="column column-90">
       <div class="row float-left">
         Reason: {{ report.Reason }}
-        Resource:
-        <div v-if="report.CommentUID != '00000000-0000-0000-0000-000000000000'">
-            comment {{ report.CommentUID }}
-        </div>
-        <div v-else>
-            post
-        </div>
         <div v-if="resource">
-          <comment v-if="report.CommentUID != '00000000-0000-0000-0000-000000000000'" :comment="resource"></comment>
-          <post v-else :post="resource"></post>
+          <comment v-if="report.CommentUID != '00000000-0000-0000-0000-000000000000'" :comment="resource" :isMod=true></comment>
+          <post v-else :post="resource" :isMod=true></post>
         </div>
       </div>
     </div>
@@ -36,6 +29,7 @@ export default {
   data() {
     return {
       resource: null,
+      show: false
     }
   },
   mounted () {
@@ -53,18 +47,20 @@ export default {
       HTTP.get('categories/' + this.report.CategoryUID + '/posts/' + this.report.PostUID)
       .then((response) => {
         this.resource = response.data
+        this.show = true
       })
-      .catch(error => {
-        toast.error(error.message)
+      .catch(() => {
+        this.deleteReport()
       })
     },
     fetchComment() {
       HTTP.get('categories/' + this.report.CategoryUID + '/posts/' + this.report.PostUID + '/comments/' + this.report.CommentUID + '/single')
       .then((response) => {
         this.resource = response.data
+        this.show = true
       })
-      .catch(error => {
-        toast.error(error.message)
+      .catch(() => {
+        this.deleteReport()
       })
     },
     deletePost() {
@@ -77,14 +73,22 @@ export default {
     },
     deleteReport(retry=true) {
       HTTP.delete('/categories/' + this.$route.params.categoryuid + '/reports/' + this.report.UID, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('accessToken')}})
-      .then(() => {})
       .catch(error => {
         if (retry && error.response.status === 403) {
-          this.handle403(() => this.deletePost(retry=false))
+          this.handle403(() => this.deleteReport(retry=false))
         }
         toast.error(error.message)
       })
-    }
+    },
+    handle403(func) {
+      if (localStorage.getItem('refreshToken')) {
+        this.$store.dispatch('refresh')
+        func()
+      } else {
+        this.$store.dispatch('logout')
+        this.$router.push('/login/')
+      }
+    },
   }
 }
 </script>
