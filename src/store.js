@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 import {HTTP} from '@/util/http'
 import toast from '@/util/toast'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const LOGIN = 'LOGIN'
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
@@ -13,18 +13,20 @@ const LOGOUT = 'LOGOUT'
 export default new Vuex.Store({
   state: {
     pending: false,
-    isLoggedIn: localStorage.getItem('accessToken')
+    isLoggedIn: localStorage.getItem('accessToken'),
+    currentUser: localStorage.getItem('username')
   },
   mutations: {
     [LOGIN] (state) {
-      state.pending = true;
+      state.pending = true
     },
     [LOGIN_SUCCESS] (state) {
-      state.isLoggedIn = true;
-      state.pending = false;
+      state.isLoggedIn = true
+      state.pending = false
+      state.currentUser = localStorage.getItem('username')
     },
-    [LOGOUT](state) {
-      state.isLoggedIn = false;
+    [LOGOUT] (state) {
+      state.isLoggedIn = false
     }
   },
   actions: {
@@ -53,7 +55,7 @@ export default new Vuex.Store({
       localStorage.removeItem('UID')
       localStorage.removeItem('refreshToken')
       localStorage.removeItem('username')
-      commit(LOGOUT);
+      commit(LOGOUT)
     },
     refresh() {
       HTTP.post('auth/refresh', JSON.stringify({'token': localStorage.getItem('refreshToken')}))
@@ -71,6 +73,9 @@ export default new Vuex.Store({
  getters: {
   isLoggedIn: state => {
     return state.isLoggedIn
+   },
+   currentUser: state => {
+     return state.currentUser
    }
   }
-});
+})
