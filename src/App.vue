@@ -4,7 +4,7 @@
       <router-link :to="'/'">Home</router-link> | 
       <router-link :to="'/categories'">Categories</router-link> | 
       <span v-if="isLoggedIn">
-        Logged in as {{ username }}
+        Logged in as {{ username() }}
         <a href="#" v-if="isLoggedIn" @click="logout">(logout)</a> | 
         <router-link :to="'/oauth/register'">New third-party app</router-link>
       </span>
@@ -21,11 +21,11 @@
 import Vuex from 'vuex'
 export default {
   methods: {
-    ...Vuex.mapActions(['logout'])
+    ...Vuex.mapActions(['logout']),
+    username: () => localStorage.getItem('username'),
   },
   computed: {
     ...Vuex.mapGetters(['isLoggedIn']),
-    username: () => localStorage.getItem('username'),
   }
 }
 </script>
